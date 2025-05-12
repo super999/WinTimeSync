@@ -16,7 +16,8 @@
    ```
 
 ## 程序打包
-- 使用PyInstaller将Python脚本打包为可执行文件：
+- 使用PyInstaller将Python脚本打包为可执行文件，并手动拷贝配置文件到dist目录：
   ```bash
-  pyinstaller -i win_time_sync_app.ico  --onefile --console main.py
+  pyinstaller -i win_time_sync_app.ico --onefile --console --name win_time_sync main.py
+  copy config.json dist\
   ```

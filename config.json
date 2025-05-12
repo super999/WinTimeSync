@@ -1,0 +1,7 @@
+{
+  "host": "192.168.9.136",
+  "port": 22,
+  "user": "super999",
+  "passwd": "chenxiawen",
+  "sync_interval": 600
+} 

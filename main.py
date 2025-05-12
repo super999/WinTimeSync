@@ -1,6 +1,9 @@
 import paramiko  # SSH 库
 import win32api, win32security  # pywin32 库
 from datetime import datetime
+import json
+import argparse
+import time
 
 
 def get_linux_time(host, port, user, passwd):
@@ -26,9 +29,21 @@ def set_windows_time(year, month, day, hour, minute, second):
 
 
 if __name__ == "__main__":
-    # 请根据实际环境替换以下参数
-    host, port = "192.168.9.136", 22
-    user, passwd = "super999", "chenxiawen"
-    y, m, d, h, mi, s = get_linux_time(host, port, user, passwd)
-    set_windows_time(y, m, d, h, mi, s)
-    print(f"Windows 时间已同步至 Linux 时间,{y}-{m}-{d} {h}:{mi}:{s}")
+    parser = argparse.ArgumentParser(description='Windows时间同步工具')
+    parser.add_argument('--loop', action='store_true', help='是否循环同步')
+    args = parser.parse_args()
+    print("参数提示: 使用 --loop 参数可循环同步，否则只同步一次。")
+    with open("config.json", "r", encoding="utf-8") as f:
+        config = json.load(f)
+    host = config["host"]
+    port = config["port"]
+    user = config["user"]
+    passwd = config["passwd"]
+    sync_interval = config["sync_interval"]
+    while True:
+        y, m, d, h, mi, s = get_linux_time(host, port, user, passwd)
+        set_windows_time(y, m, d, h, mi, s)
+        print(f"Windows 时间已同步至 Linux 时间,{y}-{m}-{d} {h}:{mi}:{s}")
+        if not args.loop:
+            break
+        time.sleep(sync_interval)
