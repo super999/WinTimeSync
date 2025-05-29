@@ -4,6 +4,7 @@ from datetime import datetime
 import json
 import argparse
 import time
+import sys, ctypes
 
 
 def get_linux_time(host, port, user, passwd):
@@ -28,7 +29,17 @@ def set_windows_time(year, month, day, hour, minute, second):
     win32api.SetSystemTime(year, month, 0, day, hour, minute, second, 0)  # :contentReference[oaicite:9]{index=9}
 
 
+def is_admin():
+    return ctypes.windll.shell32.IsUserAnAdmin()
+
+
 if __name__ == "__main__":
+    if not is_admin():
+        ctypes.windll.shell32.ShellExecuteW(
+            None, "runas", sys.executable, " ".join(sys.argv), None, 1
+        )
+        sys.exit()
+
     parser = argparse.ArgumentParser(description='Windows时间同步工具')
     parser.add_argument('--loop', action='store_true', help='是否循环同步')
     args = parser.parse_args()
